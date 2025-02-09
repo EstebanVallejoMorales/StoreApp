@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StoreApp.Models
+﻿namespace StoreApp.Models
 {
     public class CustomerModel
     {
@@ -13,5 +7,8 @@ namespace StoreApp.Models
         public string FirstLastName { get; set; }
         public string? SecondLastName { get; set; }
         public string Email { get; set; }
+
+        //Relationships
+        public ICollection<OrderModel>? Orders { get; set; }
     }
 }

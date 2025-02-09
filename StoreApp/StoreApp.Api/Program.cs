@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data;
+
 namespace StoreApp.Api
 {
     public class Program
@@ -6,6 +9,20 @@ namespace StoreApp.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "_corsConfiguration",
+                                  builder =>
+                                  {
+                                      builder
+                                             .AllowAnyOrigin()
+                                             .AllowAnyMethod()
+                                             .AllowAnyHeader();
+                                  });
+            });
 
             // Add services to the container.
 
@@ -22,6 +39,8 @@ namespace StoreApp.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("_corsConfiguration");
 
             app.UseHttpsRedirection();
 
