@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using StoreApp.Data;
+using StoreApp.Mappers.Profiles;
 
 namespace StoreApp.Api
 {
@@ -23,6 +24,8 @@ namespace StoreApp.Api
                                              .AllowAnyHeader();
                                   });
             });
+
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Add services to the container.
 
@@ -53,7 +56,6 @@ namespace StoreApp.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
