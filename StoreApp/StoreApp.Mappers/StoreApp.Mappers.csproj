@@ -11,9 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StoreApp.Data\StoreApp.Data.csproj" />
     <ProjectReference Include="..\StoreApp.Entities\StoreApp.Entities.csproj" />
-    <ProjectReference Include="..\StoreApp.UseCases\StoreApp.UseCases.csproj" />
+    <ProjectReference Include="..\StoreApp.Models\StoreApp.Models.csproj" />
   </ItemGroup>
 
 </Project>
