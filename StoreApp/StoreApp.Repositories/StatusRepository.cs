@@ -1,4 +1,9 @@
-﻿using StoreApp.Entities;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data;
+using StoreApp.Entities;
+using StoreApp.Models;
 using StoreApp.UseCases.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,29 +15,64 @@ namespace StoreApp.Repositories
 {
     public class StatusRepository : IRepository<Status>
     {
-        public Task<Status> AddAsync(Status entity)
+        private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public StatusRepository(AppDbContext dbContext, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public Task<Status> DeleteAsync(int id)
+        public async Task<int> AddAsync(Status entity)
         {
-            throw new NotImplementedException();
+            var Status = _mapper.Map<StatusModel>(entity);
+            await _dbContext.Statuses.AddAsync(Status);
+            int createdElements = await _dbContext.SaveChangesAsync();
+            return createdElements;
         }
 
-        public Task<IEnumerable<Status>> GetAllAsync()
+        public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            int removedElements = 0;
+            var Status = await _dbContext.Statuses
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
+            if (Status != null)
+            {
+                _dbContext.Statuses.Remove(Status);
+                removedElements = await _dbContext.SaveChangesAsync();
+            }
+            return removedElements;
         }
 
-        public Task<Status> GetByIdAsync(int id)
+        public async Task<IEnumerable<Status>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Statuses
+                .ProjectTo<Status>(_mapper.ConfigurationProvider) // Optimize mapping in DB (Using IQueryable)
+                .ToListAsync();
         }
 
-        public Task<Status> UpdateAsync(Status entity)
+        public async Task<Status?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Statuses
+                .Where(c => c.Id == id)
+                .ProjectTo<Status>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> UpdateAsync(Status entity)
+        {
+            int updatedElements = 0;
+            var Status = await _dbContext.Statuses
+                .Where(c => c.Id == entity.Id)
+                .FirstOrDefaultAsync();
+            if (Status != null)
+            {
+                _mapper.Map(entity, Status);
+                updatedElements = await _dbContext.SaveChangesAsync();
+            }
+            return updatedElements;
         }
     }
 }

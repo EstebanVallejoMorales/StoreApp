@@ -1,4 +1,9 @@
-﻿using StoreApp.Entities;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data;
+using StoreApp.Entities;
+using StoreApp.Models;
 using StoreApp.UseCases.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,29 +15,64 @@ namespace StoreApp.Repositories
 {
     public class StockRepository : IRepository<Stock>
     {
-        public Task<Stock> AddAsync(Stock entity)
+        private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public StockRepository(AppDbContext dbContext, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public Task<Stock> DeleteAsync(int id)
+        public async Task<int> AddAsync(Stock entity)
         {
-            throw new NotImplementedException();
+            var Stock = _mapper.Map<StockModel>(entity);
+            await _dbContext.Stocks.AddAsync(Stock);
+            int createdElements = await _dbContext.SaveChangesAsync();
+            return createdElements;
         }
 
-        public Task<IEnumerable<Stock>> GetAllAsync()
+        public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            int removedElements = 0;
+            var Stock = await _dbContext.Stocks
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
+            if (Stock != null)
+            {
+                _dbContext.Stocks.Remove(Stock);
+                removedElements = await _dbContext.SaveChangesAsync();
+            }
+            return removedElements;
         }
 
-        public Task<Stock> GetByIdAsync(int id)
+        public async Task<IEnumerable<Stock>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Stocks
+                .ProjectTo<Stock>(_mapper.ConfigurationProvider) // Optimize mapping in DB (Using IQueryable)
+                .ToListAsync();
         }
 
-        public Task<Stock> UpdateAsync(Stock entity)
+        public async Task<Stock?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Stocks
+                .Where(c => c.Id == id)
+                .ProjectTo<Stock>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> UpdateAsync(Stock entity)
+        {
+            int updatedElements = 0;
+            var Stock = await _dbContext.Stocks
+                .Where(c => c.Id == entity.Id)
+                .FirstOrDefaultAsync();
+            if (Stock != null)
+            {
+                _mapper.Map(entity, Stock);
+                updatedElements = await _dbContext.SaveChangesAsync();
+            }
+            return updatedElements;
         }
     }
 }

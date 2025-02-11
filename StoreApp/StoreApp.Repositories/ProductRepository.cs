@@ -1,4 +1,9 @@
-﻿using StoreApp.Entities;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data;
+using StoreApp.Entities;
+using StoreApp.Models;
 using StoreApp.UseCases.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,29 +15,64 @@ namespace StoreApp.Repositories
 {
     public class ProductRepository : IRepository<Product>
     {
-        public Task<Product> AddAsync(Product entity)
+        private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public ProductRepository(AppDbContext dbContext, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public Task<Product> DeleteAsync(int id)
+        public async Task<int> AddAsync(Product entity)
         {
-            throw new NotImplementedException();
+            var Product = _mapper.Map<ProductModel>(entity);
+            await _dbContext.Products.AddAsync(Product);
+            int createdElements = await _dbContext.SaveChangesAsync();
+            return createdElements;
         }
 
-        public Task<IEnumerable<Product>> GetAllAsync()
+        public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            int removedElements = 0;
+            var Product = await _dbContext.Products
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
+            if (Product != null)
+            {
+                _dbContext.Products.Remove(Product);
+                removedElements = await _dbContext.SaveChangesAsync();
+            }
+            return removedElements;
         }
 
-        public Task<Product> GetByIdAsync(int id)
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Products
+                .ProjectTo<Product>(_mapper.ConfigurationProvider) // Optimize mapping in DB (Using IQueryable)
+                .ToListAsync();
         }
 
-        public Task<Product> UpdateAsync(Product entity)
+        public async Task<Product?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Products
+                .Where(c => c.Id == id)
+                .ProjectTo<Product>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> UpdateAsync(Product entity)
+        {
+            int updatedElements = 0;
+            var Product = await _dbContext.Products
+                .Where(c => c.Id == entity.Id)
+                .FirstOrDefaultAsync();
+            if (Product != null)
+            {
+                _mapper.Map(entity, Product);
+                updatedElements = await _dbContext.SaveChangesAsync();
+            }
+            return updatedElements;
         }
     }
 }
