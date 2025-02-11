@@ -1,7 +1,11 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using StoreApp.Data;
+using StoreApp.Entities;
 using StoreApp.Mappers.Profiles;
+using StoreApp.Repositories;
+using StoreApp.UseCases.Interfaces;
 
 namespace StoreApp.Api
 {
@@ -13,6 +17,17 @@ namespace StoreApp.Api
             var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+            // Dependency injection
+            builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<Order>, OrderRepository>();
+            builder.Services.AddScoped<IRepository<OrderItem>, OrderItemRepository>();
+            builder.Services.AddScoped<IRepository<ProductCategory>, ProductCategoryRepository>();
+            builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+            builder.Services.AddScoped<IRepository<Status>, StatusRepository>();
+            builder.Services.AddScoped<IRepository<Stock>, StockRepository>();
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: "_corsConfiguration",

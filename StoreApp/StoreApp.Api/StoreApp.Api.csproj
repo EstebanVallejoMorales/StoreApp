@@ -17,6 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\StoreApp.Data\StoreApp.Data.csproj" />
     <ProjectReference Include="..\StoreApp.Mappers\StoreApp.Mappers.csproj" />
+    <ProjectReference Include="..\StoreApp.Repositories\StoreApp.Repositories.csproj" />
+    <ProjectReference Include="..\StoreApp.UseCases\StoreApp.UseCases.csproj" />
   </ItemGroup>
 
 </Project>
