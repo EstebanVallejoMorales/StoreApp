@@ -1,10 +1,12 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using StoreApp.Data;
 using StoreApp.Entities;
 using StoreApp.Mappers.Profiles;
+using StoreApp.Presenters.Presenters;
+using StoreApp.Presenters.ViewModels;
 using StoreApp.Repositories;
+using StoreApp.UseCases.Catalog;
 using StoreApp.UseCases.Interfaces;
 
 namespace StoreApp.Api
@@ -19,6 +21,8 @@ namespace StoreApp.Api
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             // Dependency injection
+
+            // Repositories
             builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Order>, OrderRepository>();
@@ -27,6 +31,12 @@ namespace StoreApp.Api
             builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<IRepository<Status>, StatusRepository>();
             builder.Services.AddScoped<IRepository<Stock>, StockRepository>();
+
+            // Use Cases
+            builder.Services.AddScoped<GetAllProductsUseCase<Product, ProductViewModel>>();
+
+            // Presenters
+            builder.Services.AddScoped<IPresenter<Product, ProductViewModel>, ProductPresenter>();
 
             builder.Services.AddCors(options =>
             {

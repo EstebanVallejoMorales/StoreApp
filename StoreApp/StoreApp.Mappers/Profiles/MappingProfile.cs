@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using StoreApp.Entities;
 using StoreApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StoreApp.Presenters.ViewModels;
 
 namespace StoreApp.Mappers.Profiles
 {
@@ -13,7 +9,12 @@ namespace StoreApp.Mappers.Profiles
     {
         public MappingProfile()
         {
-            CreateMap<CategoryModel, Category>();            
+            CreateMap<Product, ProductViewModel>().ReverseMap();
+            CreateMap<CategoryModel, Category>().ReverseMap();
+            CreateMap<Category, CategoryViewModel>().ReverseMap();
+            CreateMap<ProductModel, Product>()
+           .ForMember(dest => dest.Categories, opt => opt.MapFrom(src =>
+               src.ProductCategories!.Select(pc => pc.Category)));
         }
     }
 }

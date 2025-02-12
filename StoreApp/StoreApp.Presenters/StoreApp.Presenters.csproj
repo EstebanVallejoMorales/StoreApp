@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StoreApp.Entities\StoreApp.Entities.csproj" />
+    <ProjectReference Include="..\StoreApp.UseCases\StoreApp.UseCases.csproj" />
+  </ItemGroup>
+
 </Project>
