@@ -1,7 +1,7 @@
 ﻿using StoreApp.Dto.GenericResponse;
 using StoreApp.UseCases.Interfaces;
 
-namespace StoreApp.UseCases.Catalog
+namespace StoreApp.UseCases.Product
 {
     public class GetAllProductsUseCase<TInputEntity, TOutput>
     {

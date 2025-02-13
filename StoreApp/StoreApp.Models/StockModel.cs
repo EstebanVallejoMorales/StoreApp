@@ -1,6 +1,6 @@
 ﻿namespace StoreApp.Models
 {
-    public  class StockModel
+    public class StockModel
     {
         public int Id { get; set; }
         public int ProductId { get; set; }

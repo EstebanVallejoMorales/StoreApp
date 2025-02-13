@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\StoreApp.Data\StoreApp.Data.csproj" />
     <ProjectReference Include="..\StoreApp.Entities\StoreApp.Entities.csproj" />
+    <ProjectReference Include="..\StoreApp.Presenters\StoreApp.Presenters.csproj" />
     <ProjectReference Include="..\StoreApp.UseCases\StoreApp.UseCases.csproj" />
   </ItemGroup>
 

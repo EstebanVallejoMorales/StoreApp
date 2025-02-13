@@ -8,6 +8,7 @@ using StoreApp.Presenters.ViewModels;
 using StoreApp.Repositories;
 using StoreApp.UseCases.Catalog;
 using StoreApp.UseCases.Interfaces;
+using StoreApp.UseCases.Product;
 
 namespace StoreApp.Api
 {
@@ -31,12 +32,15 @@ namespace StoreApp.Api
             builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<IRepository<Status>, StatusRepository>();
             builder.Services.AddScoped<IRepository<Stock>, StockRepository>();
+            builder.Services.AddScoped<ICatalogItemRepository<CatalogItemViewModel>, CatalogItemRepository>();
 
             // Use Cases
             builder.Services.AddScoped<GetAllProductsUseCase<Product, ProductViewModel>>();
+            builder.Services.AddScoped<GetAllCatalogItemsUseCase<CatalogItemViewModel>>();
 
             // Presenters
             builder.Services.AddScoped<IPresenter<Product, ProductViewModel>, ProductPresenter>();
+            builder.Services.AddScoped<IPresenter<CatalogItemViewModel, CatalogItemViewModel>, CatalogItemPresenter>();
 
             builder.Services.AddCors(options =>
             {
